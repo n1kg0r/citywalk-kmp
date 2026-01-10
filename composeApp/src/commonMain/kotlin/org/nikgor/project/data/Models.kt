@@ -9,7 +9,7 @@ enum class PoiCategory(val weight: Int, val dwellTimeMin: Int) {
     MUSEUM(5, 60),
     PARK(3, 30),
     RESTAURANT(weight = 40, dwellTimeMin = 45), // such a high score , cause only used once in practice
-    CAFE(weight = 8, dwellTimeMin = 20),
+    CAFE(weight = 6, dwellTimeMin = 20),
     OTHER(1, 10)
 }
 

@@ -20,10 +20,15 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.animation.core.SnapSpec
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextDecoration
 import kotlin.math.roundToInt
+
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.material.icons.filled.Share
 
 @Composable
 fun HomeScreen() {
@@ -45,6 +50,8 @@ fun HomeScreen() {
     var zoomJob by remember { mutableStateOf<Job?>(null) }
 
     val uriHandler = LocalUriHandler.current
+
+    val clipboardManager = LocalClipboardManager.current
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { paddingValues ->
@@ -57,7 +64,46 @@ fun HomeScreen() {
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
-            Text("MarcheRoute", style = MaterialTheme.typography.headlineMedium)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("CityWalk", style = MaterialTheme.typography.headlineMedium)
+
+                // Only show button if we have a plan
+                if (plan != null) {
+                    IconButton(
+                        onClick = {
+                            val currentPlan = plan!!
+
+                            val sb = StringBuilder()
+                            sb.appendLine("🚶 Route for ${currentPlan.city}")
+                            sb.appendLine("📏 ${currentPlan.totalDistKm.toInt()}km • ⏳ ~${currentPlan.estimatedTimeHours.toString().take(3)}h")
+                            sb.appendLine("---")
+
+                            currentPlan.stops.forEachIndexed { i, poi ->
+                                sb.appendLine("${i + 1}. ${poi.name}")
+                                sb.appendLine("   ${poi.category.name} • ${poi.category.dwellTimeMin} min")
+                                if (poi.link != null) {
+                                    sb.appendLine("   🔗 ${poi.link.replace(" ", "%20")}")
+                                }
+                                sb.appendLine("")
+                            }
+
+
+                            clipboardManager.setText(AnnotatedString(sb.toString()))
+
+
+                            scope.launch {
+                                snackbarHostState.showSnackbar("Itinerary copied to clipboard!")
+                            }
+                        }
+                    ) {
+                        Icon(Icons.Default.Share, contentDescription = "Share Itinerary")
+                    }
+                }
+            }
 
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 TextField(
@@ -182,17 +228,59 @@ fun HomeScreen() {
 
                 // 2. Add New POI markers
                 currentPlan.stops.forEachIndexed { index, poi ->
-                    mapViewModel.addClusterMarker(
-                        id = "poi-${poi.id}",
-                        lat = poi.lat,
-                        lon = poi.lon
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Place,
-                            contentDescription = poi.name,
-                            modifier = Modifier.size(32.dp),
-                            tint = if (index == 0) Color.Green else Color.Red
-                        )
+                    currentPlan.stops.forEachIndexed { index, poi ->
+                        // Use updated addClusterMarker that takes 'poi'
+                        mapViewModel.addClusterMarker(poi) {
+                            Icon(
+                                imageVector = Icons.Default.Place,
+                                contentDescription = poi.name,
+                                modifier = Modifier.size(32.dp).clickable {
+                                    // [Feature] Show Callout on Click
+                                    mapViewModel.showCallout(poi) {
+                                        // Tooltip UI
+                                        Surface(
+                                            shape = RoundedCornerShape(8.dp),
+                                            color = MaterialTheme.colorScheme.surface,
+                                            shadowElevation = 4.dp,
+                                            modifier = Modifier.padding(4.dp)
+                                        ) {
+                                            Column(Modifier.padding(8.dp)) {
+                                                Text(poi.name, style = MaterialTheme.typography.labelMedium)
+                                                Text(
+                                                    "${
+                                                        poi.category.name.replace(
+                                                            "_",
+                                                            " "
+                                                        )
+                                                    } • ${poi.category.dwellTimeMin} min",
+                                                    style = MaterialTheme.typography.labelSmall
+                                                )
+                                                if (poi.link != null) {
+                                                    Text(
+                                                        text = "Open Website/Wiki ↗",
+                                                        style = MaterialTheme.typography.labelSmall,
+                                                        color = MaterialTheme.colorScheme.primary,
+                                                        textDecoration = TextDecoration.Underline,
+                                                        modifier = Modifier.clickable {
+                                                            try {
+                                                                val cleanUrl = poi.link.replace(" ", "%20")
+                                                                uriHandler.openUri(cleanUrl)
+                                                            } catch (e: Exception) {
+                                                                println("Failed to open link: ${poi.link}: ${e.message}")
+                                                                scope.launch {
+                                                                    snackbarHostState.showSnackbar("Could not open link. Invalid URL format.")
+                                                                }
+                                                            }
+                                                        }
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                tint = if (index == 0) Color.Green else Color.Red
+                            )
+                        }
                     }
                 }
 

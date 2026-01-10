@@ -16,8 +16,8 @@ class OverpassClient {
         val query = """
             [out:json][timeout:25];
             (
-              node["railway"="station"]($bboxStr);
-              way["railway"="station"]($bboxStr);
+              node["railway"="station"]["station"!="subway"]["subway"!="yes"]($bboxStr);
+              way["railway"="station"]["station"!="subway"]["subway"!="yes"]($bboxStr);
             );
             out center;
         """.trimIndent()

@@ -26,7 +26,8 @@ class RoutePlanner {
             if (station != null) startPoi = station
         }
         if (startPoi == null) {
-            startPoi = Poi(-1, cityCenter.lat, cityCenter.lon, "Start (City Center)", PoiCategory.OTHER)
+            val label = if (startFromStation) "City Center (Station not found)" else "Start (City Center)"
+            startPoi = Poi(-1, cityCenter.lat, cityCenter.lon, label, PoiCategory.OTHER)
         }
 
         // 3. Fetch
@@ -79,12 +80,9 @@ class RoutePlanner {
                 distanceKm(routeCenter, CityLocation(it.lat, it.lon))
             }
             bestRestaurant?.let { selectedSet.add(it) }
+            cafes.shuffled().firstOrNull()?.let { selectedSet.add(it) }
 
-            // Maybe a cafe too?
-            val bestCafe = cafes.minByOrNull {
-                distanceKm(routeCenter, CityLocation(it.lat, it.lon))
-            }
-            bestCafe?.let { selectedSet.add(it) }
+            // Putting the center-most restaurant and a random cafe
         }
 
         // 5. WEIGHTED GREEDY ROUTING
