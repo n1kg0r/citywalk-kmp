@@ -35,7 +35,7 @@ kotlin {
     wasmJs {
         browser {
             commonWebpackConfig {
-                outputFileName = "marcheroute.js"
+                outputFileName = "citywalk.js"
             }
         }
         binaries.executable()

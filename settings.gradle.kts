@@ -1,4 +1,4 @@
-rootProject.name = "marcheroute-kmp"
+rootProject.name = "citywalk-kmp"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {

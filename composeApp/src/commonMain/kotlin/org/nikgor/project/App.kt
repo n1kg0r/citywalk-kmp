@@ -16,14 +16,14 @@ import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
-import marcheroute_kmp.composeapp.generated.resources.Res
-import marcheroute_kmp.composeapp.generated.resources.compose_multiplatform
+import citywalk_kmp.composeapp.generated.resources.Res
+import citywalk_kmp.composeapp.generated.resources.compose_multiplatform
 
 import org.nikgor.project.screens.HomeScreen
 
 @Composable
 @Preview
-fun MarcheRouteApp() {
+fun CityWalkApp() {
     MaterialTheme {
         HomeScreen()
     }

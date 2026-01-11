@@ -17,7 +17,7 @@ fun osmTileProvider(): TileStreamProvider =
 
         try {
             val response = HttpClientProvider.client.get(url) {
-                header(HttpHeaders.UserAgent, "MarcheRouteKMP/1.0 (your@email.com)")
+                header(HttpHeaders.UserAgent, "CityWalkKMP/1.0 (gorbachev.nm@gmail.com)")
             }
             if (response.status.value == 200) {
                 val buffer = Buffer()

@@ -60,7 +60,7 @@ class OverpassClient {
                     "https://overpass-api.de/api/interpreter"
                 ) {
                     setBody(query)
-                    header(HttpHeaders.UserAgent, "marcheroute-kmp/0.1")
+                    header(HttpHeaders.UserAgent, "citywalk-kmp/0.1")
                     accept(ContentType.Application.Json)
                 }
 
@@ -120,7 +120,7 @@ class OverpassClient {
             "https://overpass-api.de/api/interpreter"
         ) {
             setBody(query)
-            header(HttpHeaders.UserAgent, "marcheroute-kmp/0.1")
+            header(HttpHeaders.UserAgent, "citywalk-kmp/0.1")
             accept(ContentType.Application.Json)
         }
 

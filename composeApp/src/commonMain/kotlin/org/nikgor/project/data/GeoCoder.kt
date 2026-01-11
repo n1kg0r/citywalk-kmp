@@ -12,7 +12,7 @@ class GeoCoder {
                 parameter("q", city)
                 parameter("format", "json")
                 parameter("limit", 1)
-                header(HttpHeaders.UserAgent, "marcheroute-kmp/0.1")
+                header(HttpHeaders.UserAgent, "citywalk-kmp/0.1")
             }.body()
 
         if (response.isEmpty()) {
