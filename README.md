@@ -56,7 +56,7 @@ The core of the app is a custom heuristic algorithm found in `RoutePlanner.kt`. 
 * **Kotlin Multiplatform**: Shared logic for Android & Desktop.
 * **Compose Multiplatform**: Shared UI code (Material 3 Design).
 * **Ktor**: Networking (HTTP client for API calls).
-* **MapCompose**: High-performance vector map rendering.
+* **MapCompose**: High-performance rendering engine used to display OpenStreetMap tiles.
 * **Coroutines**: Asynchronous data fetching and processing.
 * **Kotlinx Serialization**: JSON parsing.
 
